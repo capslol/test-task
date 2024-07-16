@@ -2,11 +2,26 @@ import axios from 'axios';
 import {LoginData, LoginResponse, RegistrationData, User} from "../types/types";
 
 
+const apiUrl = 'http://localhost:1337/api/auth/local';
+
+export const getUserData = async () => {
+    const token = localStorage.getItem('accessToken');
+    const userId = localStorage.getItem('userId');
+    const response = await axios.get(`${apiUrl}/users/${userId}`, {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    });
+    return response.data;
+};
+
+
+
 
 export const registerUser = async (userData: RegistrationData): Promise<boolean> => {
     try {
-        const apiUrl = 'http://localhost:1337/api/auth/local/register';
-        const response = await axios.post(apiUrl, userData);
+
+        const response = await axios.post(`${apiUrl}/register`, userData);
 
         if (response.status === 200) {
             console.log('Пользователь успешно зарегистрирован:', response.data);
