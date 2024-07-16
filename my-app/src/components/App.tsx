@@ -1,31 +1,27 @@
-import React, {useEffect} from 'react';
+import React, { useEffect } from 'react';
+import axios from 'axios';
 
 function App() {
-
   useEffect(() => {
-    fetch('http://localhost:1337/auth/local/register', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        username: 'newuser',
-        email: 'newuser@example.com',
-        password: 'password123',
-      }),
-    })
-        .then(response => response.json())
-        .then(data => {
-          console.log('User created:', data);
-        })
-        .catch(error => {
-          console.error('Error:', error);
+    const registerUser = async () => {
+      try {
+        const response = await axios.post('http://localhost:1337/api/auth/local/register', {
+          username: 'newuser',
+          email: 'newuser@example.com',
+          password: 'password123',
         });
-  }, [])
+        console.log('User created:', response.data);
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    };
+
+    registerUser();
+  }, []);
 
   return (
-    <div className="App">
-    </div>
+      <div className="App">
+      </div>
   );
 }
 
