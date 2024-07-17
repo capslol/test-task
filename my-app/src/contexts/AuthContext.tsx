@@ -2,7 +2,7 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
-import {User, LoginResponse, RegistrationData, LoginData} from '../types/types';
+import {LoginResponse, RegistrationData, LoginData} from '../types/types';
 import { loginService, registerUser } from '../services/authService';
 
 interface AuthContextType {
@@ -25,7 +25,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const mutation = useMutation<LoginResponse, unknown, LoginData>({
         mutationFn: loginService,
         onSuccess: (data) => {
-            localStorage.setItem('accessToken', data.accessToken);
+            localStorage.setItem('accessToken', data.jwt);
+            localStorage.setItem('userId', data.user.id);
             setIsAuthenticated(true);
             navigate('/');
         },

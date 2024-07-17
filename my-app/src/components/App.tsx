@@ -7,6 +7,7 @@ import Home from "./Home";
 import { AuthProvider } from "../contexts/AuthContext";
 import NotFound from "./NotFound";
 import SecureRoute from "../routes/SecureRoute";
+import Cart from "./Cart";
 
 const App: FC = () => {
 
@@ -20,6 +21,7 @@ const App: FC = () => {
             <Route path="/register" element={<Register/>}/>
             <Route element={<SecureRoute/>}>
               <Route path="/" element={<Home/>}/>
+              <Route path="/cart" element={<Cart/>}/>
               <Route path="/notFound" element={<NotFound/>}/>
             </Route>
             <Route path="*" element={<Navigate to="/notFound"/>}/>

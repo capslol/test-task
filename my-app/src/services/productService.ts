@@ -1,9 +1,46 @@
 // productService.ts
 import axios from 'axios';
-import { Product } from '../types/types';
-const apiUrl = 'http://localhost:1337/api/auth/local';
+import {ProductType} from '../types/types';
+import {getUserData} from "./authService";
+import {getCartItems} from "./cartService";
 
-export const getProducts = async (): Promise<Product[]> => {
-    const response = await axios.get(`${apiUrl}/products`);
-    return response.data;
+const apiUrl = 'http://localhost:1337/api';
+
+export const getProducts = async (): Promise<ProductType[]> => {
+    const response = await axios.get(`${apiUrl}/products?populate=image`);
+    console.log(response.data)
+    return response.data.data.map((item: any) => ({
+        id: item.id,
+        ...item.attributes,
+        image: item.attributes.image?.data?.attributes?.url
+            ? `http://localhost:1337${item.attributes.image.data.attributes.url}`
+            : null,
+    }));
+};
+
+
+export const addToCart = async (productId: string) => {
+    const userId = localStorage.getItem('userId');
+    const token = localStorage.getItem('accessToken');
+
+    const cart = await getCartItems()
+
+    try {
+        const response = await axios.put(
+            `${apiUrl}/users/${userId}`,
+            {cart: [...cart, {id: productId}]}, // Тело запроса должно содержать корректную структуру для обновления корзины
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }
+        );
+
+        console.log(response.data);
+
+        return response.data;
+    } catch (error) {
+        console.error('Error adding product to cart:', error);
+        throw error;
+    }
 };

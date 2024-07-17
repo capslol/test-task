@@ -2,7 +2,7 @@ import axios from 'axios';
 import {LoginData, LoginResponse, RegistrationData, User} from "../types/types";
 
 
-const apiUrl = 'http://localhost:1337/api/auth/local';
+const apiUrl = 'http://localhost:1337/api';
 
 export const getUserData = async () => {
     const token = localStorage.getItem('accessToken');
@@ -12,6 +12,7 @@ export const getUserData = async () => {
             Authorization: `Bearer ${token}`,
         },
     });
+    console.log(response.data)
     return response.data;
 };
 
@@ -21,7 +22,7 @@ export const getUserData = async () => {
 export const registerUser = async (userData: RegistrationData): Promise<boolean> => {
     try {
 
-        const response = await axios.post(`${apiUrl}/register`, userData);
+        const response = await axios.post(`${apiUrl}/auth/local/register`, userData);
 
         if (response.status === 200) {
             console.log('Пользователь успешно зарегистрирован:', response.data);

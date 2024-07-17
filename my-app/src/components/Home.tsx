@@ -5,8 +5,11 @@ import {useQuery} from "@tanstack/react-query";
 import { Box, Spinner} from "@chakra-ui/react";
 
 import {useAuth} from "../contexts/AuthContext";
-import {Product, User} from "../types/types";
+import {ProductType, User} from "../types/types";
 import {getProducts} from "../services/productService";
+import {getUserData} from "../services/authService";
+import ProductList from "./ProductList";
+import {useNavigate} from "react-router-dom";
 
 
 
@@ -58,13 +61,6 @@ const SectionTitle = styled.h3`
   font-family: ${fonts.primary};
 `;
 
-
-
-
-
-
-
-
 const ServicesGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -95,19 +91,21 @@ const ServiceName = styled.p`
 
 const HomePage = () => {
     const { logout } = useAuth();
+    const navigate = useNavigate()
 
-    const { data: products, isLoading, isError } = useQuery<Product[]>({
-        queryKey: ['productData'],
-        queryFn: getProducts
+
+    const { data: user, isLoading: isLoadingUser, isError: isErrorUser } = useQuery<User>({
+        queryKey: ['userData'],
+        queryFn: getUserData,
     });
 
     useEffect(() => {
-        if (isError) {
-            logout();
-        }
-    }, [isError, logout]);
+        // if (isErrorProducts || isErrorUser) {
+        //     logout();
+        // }
+    }, [ isErrorUser, logout]);
 
-    if (isLoading) {
+    if (isLoadingUser) {
         return (
             <Box display="flex" justifyContent="center" alignItems="center" height="100vh">
                 <Spinner size="xl" />
@@ -115,7 +113,7 @@ const HomePage = () => {
         );
     }
 
-    if (isError) {
+    if (isErrorUser) {
         return null;
     }
 
@@ -126,7 +124,7 @@ const HomePage = () => {
                 <UserInfo>
                     <Avatar imageurl="img/avatar1.png"/>
                     <Greeting>
-                        {/*<UserName>Привет, {user?.name}!</UserName>*/}
+                        <UserName>Hi, {user?.username}!</UserName>
                         {/*<Location>Bangalore, India</Location>*/}
                     </Greeting>
                 </UserInfo>
@@ -135,33 +133,18 @@ const HomePage = () => {
                     </Button>
                     <Button>
                     </Button>
+                    <Button onClick={() => navigate('/cart')}>
+                    </Button>
                 </IconGroup>
             </Header>
             <Section>
-                <SectionTitle>Your Pets</SectionTitle>
+                <SectionTitle>Just a section</SectionTitle>
                 {/*<ProductList/>*/}
             </Section>
 
             <Section>
-                <SectionTitle>Services</SectionTitle>
-                <ServicesGrid>
-                    <ServiceCard>
-                        <ServiceIcon src="img/service-icon.svg" alt="Daycare"/>
-                        <ServiceName>Daycare</ServiceName>
-                    </ServiceCard>
-                    <ServiceCard>
-                        <ServiceIcon src="img/service-icon.svg" alt="Health"/>
-                        <ServiceName>Health</ServiceName>
-                    </ServiceCard>
-                    <ServiceCard>
-                        <ServiceIcon src="img/service-icon.svg" alt="Grooming"/>
-                        <ServiceName>Grooming</ServiceName>
-                    </ServiceCard>
-                    <ServiceCard>
-                        <ServiceIcon src="img/service-icon.svg" alt="Tracking"/>
-                        <ServiceName>Tracking</ServiceName>
-                    </ServiceCard>
-                </ServicesGrid>
+                <SectionTitle>Catalog</SectionTitle>
+                <ProductList></ProductList>
             </Section>
         </Container>
     );
