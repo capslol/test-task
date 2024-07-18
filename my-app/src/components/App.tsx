@@ -8,6 +8,7 @@ import { AuthProvider } from "../contexts/AuthContext";
 import NotFound from "./NotFound";
 import SecureRoute from "../routes/SecureRoute";
 import Cart from "./Cart";
+import GuestRoute from "../routes/guestRoute";
 
 const App: FC = () => {
 
@@ -17,8 +18,11 @@ const App: FC = () => {
         <AuthProvider>
           {/*<GlobalStyles/>*/}
           <Routes>
-            <Route path="/login" element={<Login/>}/>
-            <Route path="/register" element={<Register/>}/>
+              <Route element={<GuestRoute/>}>
+                  <Route path="/login" element={<Login/>}/>
+                  <Route path="/register" element={<Register/>}/>
+              </Route>
+
             <Route element={<SecureRoute/>}>
               <Route path="/" element={<Home/>}/>
               <Route path="/cart" element={<Cart/>}/>

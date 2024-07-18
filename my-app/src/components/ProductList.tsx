@@ -3,30 +3,8 @@ import styled from 'styled-components';
 import { useQuery } from '@tanstack/react-query';
 import { getProducts } from '../services/productService';
 import Product from './Product';
-import {ProductType, User} from "../types/types";
-import {getUserData} from "../services/authService";
 
-const ProductsContainer = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  padding: 16px;
-`;
 
-const Loading = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-`;
-
-const Error = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  color: red;
-`;
 
 const ProductList: React.FC = () => {
     const { data: products, isLoading: isLoadingProducts, isError: isErrorProducts } = useQuery({
@@ -50,5 +28,26 @@ const ProductList: React.FC = () => {
         </ProductsContainer>
     );
 };
+
+const ProductsContainer = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  padding: 16px;
+`;
+
+const Loading = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+`;
+
+const Error = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  color: red;
+`;
 
 export default ProductList;

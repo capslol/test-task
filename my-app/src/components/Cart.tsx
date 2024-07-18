@@ -2,17 +2,12 @@ import React from 'react';
 import styled from 'styled-components';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { removeFromCart, getCartItems } from '../services/cartService';
-import { ProductType as ProductType } from '../types/types';
-import {colors, Container, fonts, Header, Button, mixins, Section, Avatar} from '../styles/styles';
-import {getProducts} from "../services/productService";
-import GoBackButton from "./GoBackButton";
-
-
+import { ProductType } from '../types/types';
+import { Container, Header } from '../styles/styles';
+import GoBackButton from './GoBackButton';
 
 const Cart: React.FC = () => {
     const queryClient = useQueryClient();
-
-    // Query for fetching cart items
 
     const { data: cartItems, isLoading, isError } = useQuery({
         queryKey: ['cartItems'],
@@ -22,25 +17,11 @@ const Cart: React.FC = () => {
     const deleteMutation = useMutation({
         mutationFn: (productId: string) => removeFromCart(productId),
         onSuccess: () => {
-            // Обновление кэша для cartItems
             queryClient.refetchQueries({
                 queryKey: ['cartItems']
-            })
+            });
         },
     });
-
-    if (isLoading) {
-        return <p>Loading...</p>;
-    }
-
-    if (isError) {
-        return <p>Error loading products</p>;
-    }
-
-    const handleRemoveItem = async (productId: string) => {
-        deleteMutation.mutate(productId)
-
-    };
 
     if (isLoading) {
         return <CartContainer>Loading...</CartContainer>;
@@ -50,44 +31,64 @@ const Cart: React.FC = () => {
         return <CartContainer>Error loading cart items</CartContainer>;
     }
 
+    const handleRemoveItem = async (productId: string) => {
+        deleteMutation.mutate(productId);
+    };
+
     return (
         <Container>
             <Header>
-                <GoBackButton/>
-            <h2>Корзина</h2>
+                <GoBackButton />
+            </Header>
+            <CartTitle>Корзина</CartTitle>
             {cartItems && cartItems.length > 0 ? (
-                <div>
+                <CartItemsContainer>
                     {cartItems.map((item: ProductType) => (
                         <CartItem key={item.id}>
                             <ProductInfo>
                                 <ProductTitle>{item.title}</ProductTitle>
                                 <ProductPrice>${item.price}</ProductPrice>
                             </ProductInfo>
-                            <RemoveButton onClick={() => handleRemoveItem(item.id)}>Удалить</RemoveButton>
+                            <RemoveButton onClick={() => handleRemoveItem(item.id)}>Remove</RemoveButton>
                         </CartItem>
                     ))}
-                </div>
+                </CartItemsContainer>
             ) : (
-                <p>Корзина пуста</p>
+                <EmptyCartMessage>Корзина пуста</EmptyCartMessage>
             )}
-            </Header>
         </Container>
     );
 };
-
 
 const CartContainer = styled.div`
   max-width: 600px;
   margin: 0 auto;
   padding: 20px;
+  text-align: center;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+`;
+
+const CartTitle = styled.h2`
+  font-size: 28px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 20px;
+`;
+
+const CartItemsContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 `;
 
 const CartItem = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid #ddd;
-  padding: 10px 0;
+  background-color: #f9f9f9;
+  border-radius: 10px;
+  padding: 16px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 `;
 
 const ProductInfo = styled.div`
@@ -96,24 +97,39 @@ const ProductInfo = styled.div`
 
 const ProductTitle = styled.h4`
   margin: 0;
+  font-size: 18px;
+  font-weight: 500;
+  color: #555;
 `;
 
 const ProductPrice = styled.p`
   margin: 0;
+  font-size: 16px;
+  font-weight: 400;
+  color: #888;
 `;
 
 const RemoveButton = styled.button`
-  background-color: #dc3545;
+  background-color: #ff3b30;
   color: white;
   border: none;
-  padding: 6px 12px;
-  border-radius: 4px;
+  padding: 8px 16px;
+  border-radius: 8px;
   cursor: pointer;
   transition: background-color 0.3s;
 
   &:hover {
-    background-color: #c82333;
+    background-color: #e32e1f;
   }
+
+  &:active {
+    background-color: #c12b1a;
+  }
+`;
+
+const EmptyCartMessage = styled.p`
+  font-size: 18px;
+  color: #888;
 `;
 
 export default Cart;

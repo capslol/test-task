@@ -8,9 +8,8 @@ import {
     FormLabel,
     FormInput,
     LoginButton,
-    Title
+    Title, Message, HighlightLink
 } from '../styles/LoginPageStyles';
-import {Button} from "@chakra-ui/react";
 
 
 interface Promises {
@@ -25,6 +24,7 @@ const LoginPage = () => {
     const [password, setPassword] = useState('');
 
     const { login } = useAuth();
+    const navigate = useNavigate()
 
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
@@ -55,6 +55,13 @@ const LoginPage = () => {
                     />
                 </FormGroup>
                 <LoginButton type="submit">Login</LoginButton>
+
+                <Message>
+                    Not registered yet?{' '}
+                    <HighlightLink href="#" onClick={() => navigate('/register')}>
+                        Register now
+                    </HighlightLink>
+                </Message>
             </LoginForm>
         </LoginContainer>
     );

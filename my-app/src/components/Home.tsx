@@ -1,72 +1,66 @@
 import React, {useEffect} from 'react';
 import styled from 'styled-components';
-import {colors, Container, fonts, Header, Button, mixins, Section, Avatar} from '../styles/styles';
+import {colors, Container, fonts, Header, Button, Section, Avatar} from '../styles/styles';
 import {useQuery} from "@tanstack/react-query";
-import { Box, Spinner} from "@chakra-ui/react";
-
+import {Box, Spinner} from "@chakra-ui/react";
 import {useAuth} from "../contexts/AuthContext";
-import {ProductType, User} from "../types/types";
-import {getProducts} from "../services/productService";
+import {User} from "../types/types";
 import {getUserData} from "../services/authService";
 import ProductList from "./ProductList";
 import {useNavigate} from "react-router-dom";
 import io from 'socket.io-client';
-
-
-
-
+import {PiBellLight} from "react-icons/pi";
+import {CiSearch} from "react-icons/ci";
+import {CiShoppingCart} from "react-icons/ci";
+import {getCartItems} from "../services/cartService";
 
 
 const HomePage = () => {
-    const { logout } = useAuth();
+    const {logout} = useAuth();
     const navigate = useNavigate()
 
 
     useEffect(() => {
-        const socket = io('http://localhost:1337', {
-            withCredentials: true, // Отправлять куки и заголовки авторизации
-
-        });
-
-        socket.on('connect', () => {
-            console.log('Connected to WebSocket server');
-        });
-
-        socket.on('disconnect', () => {
-            console.log('Disconnected from WebSocket server');
-        });
-
-        // Пример отправки сообщения на сервер
-        socket.emit('messageFromClient', 'Hello Server!');
-
-        // Обработка сообщения от сервера
-        socket.on('messageFromServer', (message) => {
-            console.log('Received message from server:', message);
-        });
-
-        return () => {
-            socket.disconnect();
-        };
+        // const socket = io('http://localhost:1337', {
+        //     withCredentials: true, //
+        //
+        // });
+        //
+        // socket.on('connect', () => {
+        //     console.log('Connected to WebSocket server');
+        // });
+        //
+        // socket.on('disconnect', () => {
+        //     console.log('Disconnected from WebSocket server');
+        // });
+        //
+        // socket.emit('messageFromClient', 'Hello Server!');
+        //
+        // socket.on('messageFromServer', (message) => {
+        //     console.log('Received message from server:', message);
+        // });
+        //
+        // return () => {
+        //     socket.disconnect();
+        // };
     }, []);
 
 
-
-
-    const { data: user, isLoading: isLoadingUser , isError: isErrorUser } = useQuery<User>({
+    const {data: user, isLoading: isLoadingUser, isError: isErrorUser} = useQuery<User>({
         queryKey: ['userData'],
         queryFn: getUserData,
     });
 
     useEffect(() => {
-        // if (isErrorProducts || isErrorUser) {
-        //     logout();
-        // }
-    }, [ isErrorUser, logout]);
+        if (isErrorUser) {
+            logout();
+        }
+    }, [isErrorUser, logout]);
 
     if (isLoadingUser) {
         return (
             <Box display="flex" justifyContent="center" alignItems="center" height="100vh">
-                <Spinner size="xl" />
+                <Spinner size="xl"/>
             </Box>
         );
     }
@@ -83,24 +77,24 @@ const HomePage = () => {
                     <Avatar imageurl="img/avatar1.png"/>
                     <Greeting>
                         <UserName>Hi, {user?.username}!</UserName>
-                        {/*<Location>Bangalore, India</Location>*/}
                     </Greeting>
                 </UserInfo>
                 <IconGroup>
                     <Button>
+                        <StyledPiBellLight/>
                     </Button>
                     <Button>
+                        <StyledCiSearch/>
                     </Button>
                     <Button onClick={() => navigate('/cart')}>
+                        <StyledCiShoppingCart/>
                     </Button>
                 </IconGroup>
             </Header>
             <Section>
                 <SectionTitle>
                 </SectionTitle>
-                {/*<ProductList/>*/}
             </Section>
-
             <Section>
                 <SectionTitle>Catalog</SectionTitle>
                 <ProductList></ProductList>
@@ -110,16 +104,10 @@ const HomePage = () => {
 }
 
 
-
-
-
-
-
 const UserInfo = styled.div`
   display: flex;
   align-items: center;
 `;
-
 
 const Greeting = styled.div`
   display: flex;
@@ -139,14 +127,11 @@ const Location = styled.p`
   font-family: ${fonts.primary};
 `;
 
-
-
-
 const IconGroup = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  width: 90px;
+  min-width: 150px;
 `;
 
 const Icon = styled.img`
@@ -156,40 +141,25 @@ const Icon = styled.img`
 `;
 
 
-
 const SectionTitle = styled.h3`
   font-size: 18px;
   margin-bottom: 12px;
   font-family: ${fonts.primary};
 `;
 
-const ServicesGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
+const StyledPiBellLight = styled(PiBellLight)`
+  height: 24px;
+  width: 24px;
+`;
+const StyledCiSearch = styled(CiSearch)`
+  height: 24px;
+  width: 24px;
+`;
+const StyledCiShoppingCart = styled(CiShoppingCart)`
+  height: 24px;
+  width: 24px;
 `;
 
-const ServiceCard = styled.div`
-  background-color: ${colors.lightGreen};
-  padding: 16px;
-  border-radius: 8px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-`;
-
-const ServiceIcon = styled.img`
-  width: 50px;
-  height: 50px;
-  margin-bottom: 8px;
-`;
-
-const ServiceName = styled.p`
-  font-size: 14px;
-  color: ${colors.gray};
-  font-family: ${fonts.primary};
-`;
 
 export default HomePage;
 
