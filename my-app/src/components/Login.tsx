@@ -26,6 +26,7 @@ const LoginPage = () => {
     const { login } = useAuth();
     const navigate = useNavigate()
 
+
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
         login(email, password);

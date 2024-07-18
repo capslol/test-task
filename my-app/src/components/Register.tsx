@@ -32,7 +32,7 @@ const Register = () => {
         mutationFn: (data: RegistrationData) => registerUser(data),
         onSuccess: async () => {
             try {
-                // Simulate login after registration
+
                 navigate('/');
             } catch (error) {
                 console.error('Error logging in after registration:', error);
