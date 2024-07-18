@@ -19,8 +19,8 @@ const App: FC = () => {
           {/*<GlobalStyles/>*/}
           <Routes>
               <Route element={<GuestRoute/>}>
-                  <Route path="/login" element={<Login/>}/>
                   <Route path="/register" element={<Register/>}/>
+                  <Route path="/login" element={<Login/>}/>
               </Route>
 
             <Route element={<SecureRoute/>}>
