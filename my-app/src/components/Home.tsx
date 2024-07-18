@@ -10,6 +10,108 @@ import {getProducts} from "../services/productService";
 import {getUserData} from "../services/authService";
 import ProductList from "./ProductList";
 import {useNavigate} from "react-router-dom";
+import io from 'socket.io-client';
+
+
+
+
+
+
+const HomePage = () => {
+    const { logout } = useAuth();
+    const navigate = useNavigate()
+
+
+    useEffect(() => {
+        const socket = io('http://localhost:1337', {
+            withCredentials: true, // Отправлять куки и заголовки авторизации
+
+        });
+
+        socket.on('connect', () => {
+            console.log('Connected to WebSocket server');
+        });
+
+        socket.on('disconnect', () => {
+            console.log('Disconnected from WebSocket server');
+        });
+
+        // Пример отправки сообщения на сервер
+        socket.emit('messageFromClient', 'Hello Server!');
+
+        // Обработка сообщения от сервера
+        socket.on('messageFromServer', (message) => {
+            console.log('Received message from server:', message);
+        });
+
+        return () => {
+            socket.disconnect();
+        };
+    }, []);
+
+
+
+
+    const { data: user, isLoading: isLoadingUser , isError: isErrorUser } = useQuery<User>({
+        queryKey: ['userData'],
+        queryFn: getUserData,
+    });
+
+    useEffect(() => {
+        // if (isErrorProducts || isErrorUser) {
+        //     logout();
+        // }
+    }, [ isErrorUser, logout]);
+
+    if (isLoadingUser) {
+        return (
+            <Box display="flex" justifyContent="center" alignItems="center" height="100vh">
+                <Spinner size="xl" />
+            </Box>
+        );
+    }
+
+    if (isErrorUser) {
+        return null;
+    }
+
+
+    return (
+        <Container>
+            <Header>
+                <UserInfo>
+                    <Avatar imageurl="img/avatar1.png"/>
+                    <Greeting>
+                        <UserName>Hi, {user?.username}!</UserName>
+                        {/*<Location>Bangalore, India</Location>*/}
+                    </Greeting>
+                </UserInfo>
+                <IconGroup>
+                    <Button>
+                    </Button>
+                    <Button>
+                    </Button>
+                    <Button onClick={() => navigate('/cart')}>
+                    </Button>
+                </IconGroup>
+            </Header>
+            <Section>
+                <SectionTitle>
+                </SectionTitle>
+                {/*<ProductList/>*/}
+            </Section>
+
+            <Section>
+                <SectionTitle>Catalog</SectionTitle>
+                <ProductList></ProductList>
+            </Section>
+        </Container>
+    );
+}
+
+
+
+
 
 
 
@@ -89,65 +191,5 @@ const ServiceName = styled.p`
   font-family: ${fonts.primary};
 `;
 
-const HomePage = () => {
-    const { logout } = useAuth();
-    const navigate = useNavigate()
-
-
-    const { data: user, isLoading: isLoadingUser, isError: isErrorUser } = useQuery<User>({
-        queryKey: ['userData'],
-        queryFn: getUserData,
-    });
-
-    useEffect(() => {
-        // if (isErrorProducts || isErrorUser) {
-        //     logout();
-        // }
-    }, [ isErrorUser, logout]);
-
-    if (isLoadingUser) {
-        return (
-            <Box display="flex" justifyContent="center" alignItems="center" height="100vh">
-                <Spinner size="xl" />
-            </Box>
-        );
-    }
-
-    if (isErrorUser) {
-        return null;
-    }
-
-
-    return (
-        <Container>
-            <Header>
-                <UserInfo>
-                    <Avatar imageurl="img/avatar1.png"/>
-                    <Greeting>
-                        <UserName>Hi, {user?.username}!</UserName>
-                        {/*<Location>Bangalore, India</Location>*/}
-                    </Greeting>
-                </UserInfo>
-                <IconGroup>
-                    <Button>
-                    </Button>
-                    <Button>
-                    </Button>
-                    <Button onClick={() => navigate('/cart')}>
-                    </Button>
-                </IconGroup>
-            </Header>
-            <Section>
-                <SectionTitle>Just a section</SectionTitle>
-                {/*<ProductList/>*/}
-            </Section>
-
-            <Section>
-                <SectionTitle>Catalog</SectionTitle>
-                <ProductList></ProductList>
-            </Section>
-        </Container>
-    );
-}
-
 export default HomePage;
+

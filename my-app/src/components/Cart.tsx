@@ -21,9 +21,12 @@ const Cart: React.FC = () => {
 
     const deleteMutation = useMutation({
         mutationFn: (productId: string) => removeFromCart(productId),
-        onSuccess: (data, productId) => {
-            queryClient.setQueryData(['cartItems'], productId);
-        }
+        onSuccess: () => {
+            // Обновление кэша для cartItems
+            queryClient.refetchQueries({
+                queryKey: ['cartItems']
+            })
+        },
     });
 
     if (isLoading) {
@@ -34,8 +37,9 @@ const Cart: React.FC = () => {
         return <p>Error loading products</p>;
     }
 
-    const handleRemoveItem = (productId: string) => {
-        deleteMutation.mutate(productId);
+    const handleRemoveItem = async (productId: string) => {
+        deleteMutation.mutate(productId)
+
     };
 
     if (isLoading) {
