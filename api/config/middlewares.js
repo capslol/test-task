@@ -1,18 +1,17 @@
-module.exports = [
-  'strapi::logger',
+module.exports = ({ env }) => [
   'strapi::errors',
   'strapi::security',
   {
     name: 'strapi::cors',
     config: {
-      origin: ['http://localhost:3000'], // Укажите ваш фронтенд URL
-      methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-      headers: ['Authorization', 'Content-Type'],
-      expose: ['Authorization'],
-      credentials: true // Разрешить отправку куки и заголовков авторизации
-    }
+      enabled: true,
+      origin: ['http://localhost:3000'], // Ваш фронтенд-URL
+      methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+      credentials: true,
+    },
   },
   'strapi::poweredBy',
+  'strapi::logger',
   'strapi::query',
   'strapi::body',
   'strapi::session',

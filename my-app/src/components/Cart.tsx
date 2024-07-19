@@ -1,10 +1,11 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import styled from 'styled-components';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { removeFromCart, getCartItems } from '../services/cartService';
 import { ProductType } from '../types/types';
 import { Container, Header } from '../styles/styles';
 import GoBackButton from './GoBackButton';
+import socket from "../services/socket";
 
 const Cart: React.FC = () => {
     const queryClient = useQueryClient();
@@ -22,6 +23,25 @@ const Cart: React.FC = () => {
             });
         },
     });
+
+    useEffect(() => {
+        socket.on('connect', () => {
+
+
+            socket.on('user:update', (data: ProductType) => {
+                console.log('Product updated!', data);
+                queryClient.refetchQueries({
+                    queryKey: ['cartItems']
+                });
+            });
+
+
+        });
+
+        return () => {
+            socket.off('user:update');
+        };
+    }, [queryClient]);
 
     if (isLoading) {
         return <CartContainer>Loading...</CartContainer>;

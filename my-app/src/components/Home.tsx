@@ -1,55 +1,29 @@
-import React, {useEffect} from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
-import {colors, Container, fonts, Header, Button, Section, Avatar} from '../styles/styles';
-import {useQuery} from "@tanstack/react-query";
-import {Box, Spinner} from "@chakra-ui/react";
-import {useAuth} from "../contexts/AuthContext";
-import {User} from "../types/types";
-import {getUserData} from "../services/authService";
+import { colors, Container, fonts, Header, Button, Section, Avatar } from '../styles/styles';
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { Box, Spinner } from "@chakra-ui/react";
+import { useAuth } from "../contexts/AuthContext";
+import { User, ProductType } from "../types/types";
+import { getUserData } from "../services/authService";
 import ProductList from "./ProductList";
-import {useNavigate} from "react-router-dom";
-import io from 'socket.io-client';
-import {PiBellLight} from "react-icons/pi";
-import {CiSearch} from "react-icons/ci";
-import {CiShoppingCart} from "react-icons/ci";
-import {getCartItems} from "../services/cartService";
+import { useNavigate } from "react-router-dom";
+import { PiBellLight } from "react-icons/pi";
+import { CiSearch } from "react-icons/ci";
+import { CiShoppingCart } from "react-icons/ci";
+
 
 
 const HomePage = () => {
-    const {logout} = useAuth();
-    const navigate = useNavigate()
+    const { logout } = useAuth();
+    const navigate = useNavigate();
 
-
-    useEffect(() => {
-        // const socket = io('http://localhost:1337', {
-        //     withCredentials: true, //
-        //
-        // });
-        //
-        // socket.on('connect', () => {
-        //     console.log('Connected to WebSocket server');
-        // });
-        //
-        // socket.on('disconnect', () => {
-        //     console.log('Disconnected from WebSocket server');
-        // });
-        //
-        // socket.emit('messageFromClient', 'Hello Server!');
-        //
-        // socket.on('messageFromServer', (message) => {
-        //     console.log('Received message from server:', message);
-        // });
-        //
-        // return () => {
-        //     socket.disconnect();
-        // };
-    }, []);
-
-
-    const {data: user, isLoading: isLoadingUser, isError: isErrorUser} = useQuery<User>({
+    const { data: user, isLoading: isLoadingUser, isError: isErrorUser } = useQuery<User>({
         queryKey: ['userData'],
         queryFn: getUserData,
     });
+
+
 
     useEffect(() => {
         if (isErrorUser) {
@@ -60,7 +34,7 @@ const HomePage = () => {
     if (isLoadingUser) {
         return (
             <Box display="flex" justifyContent="center" alignItems="center" height="100vh">
-                <Spinner size="xl"/>
+                <Spinner size="xl" />
             </Box>
         );
     }
@@ -69,40 +43,37 @@ const HomePage = () => {
         return null;
     }
 
-
     return (
         <Container>
             <Header>
                 <UserInfo>
-                    <Avatar imageurl="img/avatar1.png"/>
+                    <Avatar imageurl="img/avatar1.png" />
                     <Greeting>
                         <UserName>Hi, {user?.username}!</UserName>
                     </Greeting>
                 </UserInfo>
                 <IconGroup>
                     <Button>
-                        <StyledPiBellLight/>
+                        <StyledPiBellLight />
                     </Button>
                     <Button>
-                        <StyledCiSearch/>
+                        <StyledCiSearch />
                     </Button>
                     <Button onClick={() => navigate('/cart')}>
-                        <StyledCiShoppingCart/>
+                        <StyledCiShoppingCart />
                     </Button>
                 </IconGroup>
             </Header>
             <Section>
-                <SectionTitle>
-                </SectionTitle>
+                <SectionTitle></SectionTitle>
             </Section>
             <Section>
                 <SectionTitle>Catalog</SectionTitle>
-                <ProductList></ProductList>
+                <ProductList />
             </Section>
         </Container>
     );
-}
-
+};
 
 const UserInfo = styled.div`
   display: flex;
@@ -140,7 +111,6 @@ const Icon = styled.img`
   margin-left: 16px;
 `;
 
-
 const SectionTitle = styled.h3`
   font-size: 18px;
   margin-bottom: 12px;
@@ -160,6 +130,4 @@ const StyledCiShoppingCart = styled(CiShoppingCart)`
   width: 24px;
 `;
 
-
 export default HomePage;
-

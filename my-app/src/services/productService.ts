@@ -3,19 +3,16 @@ import axios from 'axios';
 import {ProductType} from '../types/types';
 import {getUserData} from "./authService";
 import {getCartItems} from "./cartService";
+import transformProductData from "./transformProductData";
 
 const apiUrl = 'http://localhost:1337/api';
 
+
+
 export const getProducts = async (): Promise<ProductType[]> => {
     const response = await axios.get(`${apiUrl}/products?populate=image`);
-    console.log(response.data)
-    return response.data.data.map((item: any) => ({
-        id: item.id,
-        ...item.attributes,
-        image: item.attributes.image?.data?.attributes?.url
-            ? `http://localhost:1337${item.attributes.image.data.attributes.url}`
-            : null,
-    }));
+    console.log(response.data);
+    return response.data.data.map((item: any) => transformProductData(item));
 };
 
 

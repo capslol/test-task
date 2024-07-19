@@ -383,6 +383,7 @@ export interface ApiProductProduct extends Schema.CollectionType {
       'plugin::users-permissions.user'
     >;
     image: Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
+    qqq: Attribute.String;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;

@@ -1,13 +1,13 @@
-import { io } from 'socket.io-client';
+import io from "socket.io-client";
 
-const socket = io('http://localhost:1337'); // Замени на свой адрес
+const SERVER_URL = 'http://localhost:1337';
+const token = localStorage.getItem('accessToken');
 
-socket.on('connect', () => {
-    console.log('connected to server');
+const socket = io(SERVER_URL, {
+    auth: {
+        strategy: 'jwt',
+        token: token,
+    },
 });
 
-socket.on('message', (data) => {
-    console.log('message received: ', data);
-});
-
-export default socket;
+export default socket
