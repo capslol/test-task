@@ -25,6 +25,5 @@ yarn start
 maxim.balov19@gmail.com
 Qwerty123str
 ```
-My computer consistently refused to install WebSocket due to some unknown reason and kept throwing errors. :(
 
 
